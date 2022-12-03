@@ -87,7 +87,6 @@ let package = Package(
             .product(name: "Algorithms", package: "swift-algorithms"),
             .product(name: "RoutingKit", package: "routing-kit"),
             .product(name: "WebSocketKit", package: "websocket-kit"),
-            .product(name: "MultipartKit", package: "multipart-kit"),
         ]),
 	
         // Development
