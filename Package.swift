@@ -56,7 +56,8 @@ let package = Package(
         // WebSocket client library built on SwiftNIO
         .package(url: "https://github.com/vapor/websocket-kit.git", from: "2.0.0"),
         
-        
+        // MultipartKit, Multipart encoding and decoding
+        .package(url: "https://github.com/vapor/multipart-kit.git", .exact("4.0.0")),
     ],
     targets: [
         // C helpers
@@ -87,6 +88,7 @@ let package = Package(
             .product(name: "Algorithms", package: "swift-algorithms"),
             .product(name: "RoutingKit", package: "routing-kit"),
             .product(name: "WebSocketKit", package: "websocket-kit"),
+            .product(name: "MultipartKit", package: "multipart-kit"),
         ]),
 	
         // Development
