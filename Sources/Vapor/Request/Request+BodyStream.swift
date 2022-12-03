@@ -1,4 +1,5 @@
 import NIO
+import NIOConcurrencyHelpers
 
 extension Request {
     final class BodyStream: BodyStreamWriter {
@@ -9,6 +10,7 @@ extension Request {
         }
 
         private(set) var isClosed: Bool
+        private let lock = NIOLock()
         private var handler: ((BodyStreamResult, EventLoopPromise<Void>?) -> ())?
         private var buffer: [(BodyStreamResult, EventLoopPromise<Void>?)]
         private let allocator: ByteBufferAllocator
@@ -21,30 +23,38 @@ extension Request {
         }
 
         func read(_ handler: @escaping (BodyStreamResult, EventLoopPromise<Void>?) -> ()) {
-            self.handler = handler
-            for (result, promise) in self.buffer {
-                handler(result, promise)
+            // A lock is needed, because some pipeline users (and known unit tests) rely on this being handled synchronously.
+            // See https://github.com/vapor/vapor/issues/2906
+            lock.withLockVoid {
+                self.handler = handler
+                for (result, promise) in self.buffer {
+                    handler(result, promise)
+                }
+                self.buffer = []
             }
-            self.buffer = []
         }
 
         func write(_ chunk: BodyStreamResult, promise: EventLoopPromise<Void>?) {
-            switch chunk {
-            case .end, .error:
-                self.isClosed = true
-            case .buffer: break
-            }
-            
-            if let handler = self.handler {
-                handler(chunk, promise)
-                // remove reference to handler
+            // A lock is needed, because some pipeline users (and known unit tests) rely on this being handled synchronously.
+            // See https://github.com/vapor/vapor/issues/2906
+            lock.withLockVoid {
                 switch chunk {
                 case .end, .error:
-                    self.handler = nil
-                default: break
+                    self.isClosed = true
+                case .buffer: break
                 }
-            } else {
-                self.buffer.append((chunk, promise))
+                
+                if let handler = self.handler {
+                    handler(chunk, promise)
+                    // remove reference to handler
+                    switch chunk {
+                    case .end, .error:
+                        self.handler = nil
+                    default: break
+                    }
+                } else {
+                    self.buffer.append((chunk, promise))
+                }
             }
         }
 
@@ -72,3 +82,4 @@ extension Request {
         }
     }
 }
+
