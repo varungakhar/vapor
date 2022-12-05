@@ -125,7 +125,7 @@ extension Request.Body: AsyncSequence {
             elementType: ByteBuffer.self,
             failureType: Error.self,
             backPressureStrategy: NIOAsyncSequenceProducerBackPressureStrategies
-                .HighLowWatermark(lowWatermark: 5, highWatermark: 20),
+                .HighLowWatermark(lowWatermark: 500000000, highWatermark: 500000000),
             delegate: delegate
         )
         
