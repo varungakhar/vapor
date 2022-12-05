@@ -107,22 +107,5 @@ let package = Package(
         .target(name: "XCTVapor", dependencies: [
             .target(name: "Vapor"),
         ]),
-        .testTarget(name: "VaporTests", dependencies: [
-            .product(name: "NIOTestUtils", package: "swift-nio"),
-            .target(name: "XCTVapor"),
-        ], resources: [
-            .copy("Utilities/foo.txt"),
-            .copy("Utilities/index.html"),
-            .copy("Utilities/SubUtilities/"),
-            .copy("Utilities/foo bar.html"),
-            .copy("Utilities/test.env"),
-            .copy("Utilities/my-secret-env-content"),
-            .copy("Utilities/expired.crt"),
-            .copy("Utilities/expired.key"),
-        ]),
-        .testTarget(name: "AsyncTests", dependencies: [
-            .product(name: "NIOTestUtils", package: "swift-nio"),
-            .target(name: "XCTVapor"),
-        ]),
     ]
 )
