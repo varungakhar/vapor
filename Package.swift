@@ -33,7 +33,7 @@ let package = Package(
         .package(url: "https://github.com/swift-server/swift-backtrace.git", from: "1.1.1"),
         
         // Event-driven network application framework for high performance protocol servers & clients, non-blocking.
-        .package(url: "https://github.com/varungakhar/swift-nio.git", Package.Dependency.Requirement.branch("main")),
+        .package(url: "https://github.com/apple/swift-nio.git", from: "2.45.0"),
         
         // Bindings to OpenSSL-compatible libraries for TLS support in SwiftNIO
         .package(url: "https://github.com/apple/swift-nio-ssl.git", from: "2.8.0"),
@@ -106,6 +106,23 @@ let package = Package(
         // Testing
         .target(name: "XCTVapor", dependencies: [
             .target(name: "Vapor"),
+        ]),
+        .testTarget(name: "VaporTests", dependencies: [
+            .product(name: "NIOTestUtils", package: "swift-nio"),
+            .target(name: "XCTVapor"),
+        ], resources: [
+            .copy("Utilities/foo.txt"),
+            .copy("Utilities/index.html"),
+            .copy("Utilities/SubUtilities/"),
+            .copy("Utilities/foo bar.html"),
+            .copy("Utilities/test.env"),
+            .copy("Utilities/my-secret-env-content"),
+            .copy("Utilities/expired.crt"),
+            .copy("Utilities/expired.key"),
+        ]),
+        .testTarget(name: "AsyncTests", dependencies: [
+            .product(name: "NIOTestUtils", package: "swift-nio"),
+            .target(name: "XCTVapor"),
         ]),
     ]
 )
