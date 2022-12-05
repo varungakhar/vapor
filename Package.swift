@@ -33,7 +33,7 @@ let package = Package(
         .package(url: "https://github.com/swift-server/swift-backtrace.git", from: "1.1.1"),
         
         // Event-driven network application framework for high performance protocol servers & clients, non-blocking.
-        .package(url: "https://github.com/varungakhar/swift-nio.git", from: "2.46.0"),
+        .package(url: "https://github.com/varungakhar/swift-nio.git", "2.46.0" ..< "3.0.0"),
         
         // Bindings to OpenSSL-compatible libraries for TLS support in SwiftNIO
         .package(url: "https://github.com/apple/swift-nio-ssl.git", from: "2.8.0"),
